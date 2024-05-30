@@ -33,26 +33,29 @@
 ![输入图片说明](readme/images/1/1.1_05.jpg)
 
 ### 安装文档
-
+#####
 ##### Dokcer安装  文档     
           cd CRMChat/crmchat/docker 
           docker-compose build php
           docker-compose up -d
+
 #####  Dokcer安装访问地址
-后台访问地址：http://ip:20108/admin  账号密码 admin 123456
-客服后台访问地址：http://ip:20108/kefu
-
-
-
+##### 后台访问地址：http://ip:20108/admin  账号密码 admin 123456
+##### 客服后台访问地址：http://ip:20108/kefu
+#####
+#####
+#####
 #### 手动安装 文档     
+#####
 ##### PHP扩展安装文档 <a target="_blank" href='https://gitee.com/ZhongBangKeJi/CRMChat/wikis/pages/preview?sort_id=4266819&doc_id=1539498'>点击查看</a>
 ##### 站点配置文档  <a target="_blank" href='https://gitee.com/ZhongBangKeJi/CRMChat/wikis/pages/preview?sort_id=4266852&doc_id=1539498'>点击查看</a>
 ##### 运行服务文档  <a target="_blank" href='https://gitee.com/ZhongBangKeJi/CRMChat/wikis/pages/preview?sort_id=4266898&doc_id=1539498'>点击查看</a>
 ##### 程序安装文档  <a target="_blank" href='https://gitee.com/ZhongBangKeJi/CRMChat/wikis/pages/preview?sort_id=4266934&doc_id=1539498'>点击查看</a>
 ##### 命令行一键安装文档 <a target="_blank" href='https://gitee.com/ZhongBangKeJi/CRMChat/wikis/pages/preview?sort_id=4267030&doc_id=1539498'>点击查看</a>
+
 ##### 访问地址
-后台访问地址：http://域名/admin 
-客服后台访问地址：http://域名/kefu
+##### 后台访问地址：http://域名/admin 
+##### 客服后台访问地址：http://域名/kefu
 
 
 ### 命令文档
