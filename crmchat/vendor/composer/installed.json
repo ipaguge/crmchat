@@ -559,12 +559,12 @@
         },
         {
             "name": "fastknife/ajcaptcha",
-            "version": "v1.1.5",
-            "version_normalized": "1.1.5.0",
+            "version": "v1.2.2",
+            "version_normalized": "1.2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://gitee.com/fastknife/aj-captcha.git",
-                "reference": "9e8eb95c444d2ff4d78d1d1d4d5cb1d29c084609"
+                "reference": "87c122b6cd950fd98702e929685e5e7c0c517ddc"
             },
             "require": {
                 "ext-gd": "*",
@@ -574,7 +574,7 @@
                 "intervention/image": "^2.5",
                 "php": ">=7.1"
             },
-            "time": "2022-07-04T10:17:37+00:00",
+            "time": "2023-03-29T10:35:25+00:00",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -4192,12 +4192,12 @@
             },
             "installation-source": "dist",
             "autoload": {
-                "psr-4": {
-                    "PullWord\\": "src"
-                },
                 "files": [
                     "src/helper.php"
-                ]
+                ],
+                "psr-4": {
+                    "PullWord\\": "src"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -4215,6 +4215,10 @@
                 "think-extend",
                 "thinkphp"
             ],
+            "support": {
+                "issues": "https://github.com/friendsofthinkphp/think-pullword/issues",
+                "source": "https://github.com/friendsofthinkphp/think-pullword/tree/v1.2.0"
+            },
             "install-path": "../xiaodi/think-pullword"
         },
         {

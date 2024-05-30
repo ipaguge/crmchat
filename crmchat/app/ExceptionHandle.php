@@ -68,7 +68,7 @@ class ExceptionHandle extends Handle
     public function render($request, Throwable $e): Response
     {
         // 添加自定义异常处理机制
-        $massageData = Env::get('app_debug', false) ? [
+        $massageData = Env::get('app_debug', true) ? [
             'message'  => $e->getMessage(),
             'file'     => $e->getFile(),
             'line'     => $e->getLine(),
