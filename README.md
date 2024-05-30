@@ -33,6 +33,10 @@
 ![输入图片说明](readme/images/1/1.1_05.jpg)
 
 ### 安装文档
+#### Dokcer安装 
+     cd CRMChat/crmchat/docker 
+     docker-compose build php
+     docker-compose up -d
 #### PHP扩展安装文档 <a target="_blank" href='https://gitee.com/ZhongBangKeJi/CRMChat/wikis/pages/preview?sort_id=4266819&doc_id=1539498'>点击查看</a>
 #### 站点配置文档  <a target="_blank" href='https://gitee.com/ZhongBangKeJi/CRMChat/wikis/pages/preview?sort_id=4266852&doc_id=1539498'>点击查看</a>
 #### 运行服务文档  <a target="_blank" href='https://gitee.com/ZhongBangKeJi/CRMChat/wikis/pages/preview?sort_id=4266898&doc_id=1539498'>点击查看</a>
