@@ -3,5 +3,4 @@
 /backup
 /public/uploads
 *.log
-/public/install/install.lock
 /swoole.pid
