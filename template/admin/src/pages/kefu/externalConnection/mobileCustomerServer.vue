@@ -46,7 +46,7 @@
                 </div>
                 <!-- 文字及表情信息 -->
                 <div class="chart_list_item_text" v-if="item.msn_type <= 2">
-                  <span v-html="replace_em(item.msn)"></span>
+                  <span v-html="replace_em(decrypt(item.msn))"></span>
                 </div>
                 <!-- 图片信息 -->
                 <div class="chart_list_item_img" v-if="item.msn_type == 3">
@@ -84,7 +84,7 @@
     <div class="footer_customerServer_container">
       <div class="mobel_customerServer_container_footer">
         <div class="crmchat_link" @click="tolink">
-          <span>CRMChat开源客服系统</span>
+
         </div>
         <div class="mobel_customerServer_container_footer_uploag_image">
           <span class="iconfont">&#xe6ca;</span>
@@ -126,6 +126,7 @@ import { HappyScroll } from 'vue-happy-scroll'
 import emojiList from "@/utils/emoji";
 import socketServer from './minix/socketServer';
 import '@/assets/js/uniapp.js';
+import {decrypt} from "@/utils/public";
 export default {
   components: {
     HappyScroll
@@ -172,6 +173,9 @@ export default {
     }
   },
   methods: {
+    decrypt(msg){
+      return decrypt(msg)
+    },
     onBackPress(){
       alert(uniWeb)
       uniWeb.webView.navigateBack({

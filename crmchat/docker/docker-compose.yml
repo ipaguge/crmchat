@@ -21,7 +21,7 @@ services:
         condition: service_healthy
     networks:
       kf_network:
-        ipv4_address: 172.18.0.4
+        ipv4_address: 17.1.0.4
 
   mysql:
     image: mysql:8.0
@@ -40,11 +40,11 @@ services:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       timeout: 20s
       retries: 10
-#    ports:
-#      - "13306:3306"
+    ports:
+      - "13306:3306"
     networks:
       kf_network:
-        ipv4_address: 172.18.0.3
+        ipv4_address: 17.1.0.3
 
   redis:
     image: redis:latest
@@ -56,13 +56,13 @@ services:
       retries: 5
     networks:
       kf_network:
-        ipv4_address: 172.18.0.2
+        ipv4_address: 17.1.0.2
 
 networks:
   kf_network:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.18.0.0/16
+        - subnet: 17.1.0.0/16
 #  docker-compose build php
 #  docker-compose up -d

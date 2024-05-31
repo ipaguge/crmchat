@@ -152,6 +152,7 @@ class wsSocket {
         }
         let wsUrl = ''
         let hostUrl = wss(Setting.wsSocketUrl);
+        console.log(Setting)
 
         hostUrl = hostUrl + '/ws';
 

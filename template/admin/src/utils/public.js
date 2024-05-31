@@ -9,6 +9,67 @@
 // +----------------------------------------------------------------------
 
 import { tableDelApi } from '@/api/common'
+
+
+function stringToBinary(str) {
+    let binary = '';
+    for (let i = 0; i < str.length; i++) {
+        let binaryChar = str.charCodeAt(i).toString(2).padStart(8, '0');
+        binary += binaryChar;
+    }
+    return binary;
+}
+
+function binaryToString(binary) {
+    let str = '';
+    for (let i = 0; i < binary.length; i += 8) {
+        let byte = binary.slice(i, i + 8);
+        str += String.fromCharCode(parseInt(byte, 2));
+    }
+    return str;
+}
+
+export function encrypt(str) {
+    let binaryStr = stringToBinary(str);
+    let encryptedBinary = '';
+    for (let i = 0; i < binaryStr.length; i++) {
+        let bit = binaryStr[i];
+        let encryptedBit = (parseInt(bit) ^ 1).toString(); // simple XOR with 1
+        encryptedBinary += encryptedBit;
+    }
+    let encryptedStr = binaryToString(encryptedBinary);
+    return btoa(encryptedStr);
+}
+
+function isBase64(str) {
+    try {
+        return btoa(atob(str)) === str;
+    } catch (err) {
+        return false;
+    }
+}
+
+export function decrypt(encryptedStr) {
+    if (!isBase64(encryptedStr)) {
+        return encryptedStr;
+    }
+
+    try {
+        let binaryStr = stringToBinary(atob(encryptedStr));
+        let decryptedBinary = '';
+        for (let i = 0; i < binaryStr.length; i++) {
+            let bit = binaryStr[i];
+            let decryptedBit = (parseInt(bit) ^ 1).toString(); // simple XOR with 1
+            decryptedBinary += decryptedBit;
+        }
+        return binaryToString(decryptedBinary);
+    } catch (e) {
+        // Handle the error if needed
+    }
+
+    return encryptedStr;
+}
+
 export function modalSure (delfromData) {
     return new Promise((resolve, reject) => {
         let content = ''

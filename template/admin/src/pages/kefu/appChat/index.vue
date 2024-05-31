@@ -27,7 +27,7 @@
                       <img v-lazy="item.avatar" />
                     </div>
                     <div class="content" ref="chatContent">
-                      <div v-if="item.msn_type === 1" class="text" v-html="item.msn"></div>
+                      <div v-if="item.msn_type === 1" class="text" v-html="decrypt(item.msn)"></div>
                       <div v-if="item.msn_type === 2" class="image">
                         <div class="text">
                           <i :class="`em ${item.msn}`"></i>
@@ -136,6 +136,7 @@ import Setting from "@/setting";
 import Cookies from 'js-cookie';
 import { chatListApi, serviceListApi, getAdvApi, serviceList, getOrderApi, productApi } from '@/api/kefu';
 import feedBack from './feedback';
+import {decrypt} from "@/utils/public";
 const chunk = function(arr, num) {
   num = num * 1 || 1;
   var ret = [];
@@ -315,6 +316,9 @@ export default {
     this.socket.close();
   },
   methods: {
+    decrypt(msg) {
+      return decrypt(msg)
+    },
     onLook(id) {
       window.open(`${location.origin}/home/goods_detail/${id}`);
     },

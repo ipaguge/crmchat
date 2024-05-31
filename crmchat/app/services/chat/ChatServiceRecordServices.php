@@ -56,6 +56,9 @@ class ChatServiceRecordServices extends BaseServices
             if (isset($item['user']['remark_nickname']) && $item['user']['remark_nickname']) {
                 $item['nickname'] = $item['user']['remark_nickname'];
             }
+            if ($item['msn_type'] == 1) {
+                $item['msn'] = msnEncrypt($item['msn']);
+            }
         }
         return $list;
     }
@@ -114,7 +117,8 @@ class ChatServiceRecordServices extends BaseServices
         $list = $this->dao->getServiceList(['delete' => 1, 'group_id' => $groupId, 'label_id' => $labelId, 'appid' => $appid, 'user_id' => $userId, 'title' => $nickname, 'is_tourist' => $isTourist], $page, $limit, ['user']);
         foreach ($list as &$item) {
             if ($item['message_type'] == 1) {
-                $item['message'] = $this->getMessage($item['message']);
+                $item['message'] = msnEncrypt($this->getMessage($item['message']));
+//                $item['message'] = $this->getMessage($item['message']);
             }
             $item['_update_time'] = date('Y-m-d H:i', $item['update_time']);
             if (isset($item['user']['remark_nickname']) && $item['user']['remark_nickname']) {
@@ -210,6 +214,9 @@ class ChatServiceRecordServices extends BaseServices
                 case ChatServiceDialogueRecordServices::MSN_TYPE_ORDER:
                 case ChatServiceDialogueRecordServices::MSN_TYPE_GOODS:
                     $message = '[图文]' . ($message['other']['store_name'] ?? '');
+                    break;
+                case ChatServiceDialogueRecordServices::MSN_TYPE_TXT:
+                    $message = msnDecrypt($message);
                     break;
             }
         }

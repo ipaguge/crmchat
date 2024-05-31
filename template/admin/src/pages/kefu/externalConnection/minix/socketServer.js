@@ -4,6 +4,7 @@ import { sendMessageMobile } from '@/api/kefu_mobile';
 import { setLoc, getLoc, getGuid } from '@/libs/util'
 import { mapState } from 'vuex';
 import Cookies from "js-cookie";
+import {encrypt} from "@/utils/public";
 
 var mp3 = require('@/assets/video/notice.wav');
 export default {
@@ -266,6 +267,7 @@ export default {
         })
 
         ws.$on('kefu_logout',data=>{
+          debugger
           if(data.online == 0){
             this.$router.replace({
               name: 'customerOutLine',
@@ -467,6 +469,7 @@ export default {
       this.chatServerData.serviceList.push(data);
     },
     chatOptinos(guid, msn, type, other) {
+      msn = encrypt(msn);
       return {
         msn,
         msn_type: type,

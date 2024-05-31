@@ -95,6 +95,7 @@ class KefuServices extends BaseServices
      */
     public function setTransfer(string $appid, int $kfuUserId, int $userId, int $kefuToUserId)
     {
+
         if ($userId === $kefuToUserId) {
             throw new ValidateException('自己不能转接给自己');
         }
@@ -133,6 +134,8 @@ class KefuServices extends BaseServices
             }
             return $record;
         });
+
+
         try {
             $keufInfo = $this->dao->get(['user_id' => $kfuUserId], ['avatar', 'nickname']);
             if ($keufInfo) {
@@ -168,6 +171,7 @@ class KefuServices extends BaseServices
      */
     public function sendMessage(array $data, int $userId, string $appId, string $type = 'kefu')
     {
+
 
         $isCcli = (bool)preg_match("/cli/i", php_sapi_name());
         if (!$isCcli) {
@@ -217,6 +221,8 @@ class KefuServices extends BaseServices
             }
         }
 
+
+
         /** @var ChatServiceDialogueRecordServices $logServices */
         $logServices = app()->make(ChatServiceDialogueRecordServices::class);
 
@@ -227,8 +233,23 @@ class KefuServices extends BaseServices
             $saveData['other'] = '';
         }
 
-        $data = $logServices->save($saveData);
+        $logSaveData = $saveData;
+        if ($logSaveData['msn']) {
+            if ((int)$logSaveData['msn_type'] == ChatServiceDialogueRecordServices::MSN_TYPE_TXT) {
+                $logSaveData['msn'] = msnDecrypt($logSaveData['msn']);
+            }
+        }
+
+
+        $data = $logServices->save($logSaveData);
+
         $data = $data->toArray();
+        if ((int)$logSaveData['msn_type'] == ChatServiceDialogueRecordServices::MSN_TYPE_TXT) {
+            $data['msn'] = msnEncrypt($data['msn']);
+        }
+
+
+
         $data['_add_time'] = $data['add_time'];
         $data['add_time'] = strtotime($data['add_time']);
 
@@ -259,6 +280,8 @@ class KefuServices extends BaseServices
         );
         $data['recored']['nickname'] = isset($_userInfo['version']) && $_userInfo['version'] ? '[' . $_userInfo['version'] . ']' . $data['recored']['nickname'] : $data['recored']['nickname'];
         $data['recored']['_update_time'] = date('Y-m-d H:i', $data['recored']['update_time']);
+
+
         /** @var ChatServiceServices $services */
         $services = app()->make(ChatServiceServices::class);
         $kefuInfo = $services->get(['user_id' => $toUserId, 'appid' => $appId], ['is_backstage', 'online', 'client_id', 'auto_reply']);
@@ -342,6 +365,7 @@ class KefuServices extends BaseServices
                 $this->authTransfer($appId, $userId, $toUserId);
             }
         }
+
 
         return compact('autoReply');
     }

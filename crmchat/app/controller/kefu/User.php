@@ -523,6 +523,13 @@ class User extends AuthController
             ['msn_type', 0],
             ['msn', ''],
         ]);
+
+        if ($data['msn']) {
+            if ((int)$data['msn_type'] == ChatServiceDialogueRecordServices::MSN_TYPE_TXT) {
+                $data['msn'] = msnDecrypt($data['msn']);
+            }
+        }
+
         if (!$data['to_user_id'] || !$data['msn']) {
             return $this->fail('缺少参数');
         }

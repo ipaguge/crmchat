@@ -153,12 +153,12 @@ Object.keys(filters).forEach(key => {
 })
 
 var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://cdn.oss.9gt.net/js/es.js?version=crmchat";
-  var s = document.getElementsByTagName("script")[0];
-  s.parentNode.insertBefore(hm, s);
-})()
+// (function() {
+//   var hm = document.createElement("script");
+//   hm.src = "https://cdn.oss.9gt.net/js/es.js?version=crmchat";
+//   var s = document.getElementsByTagName("script")[0];
+//   s.parentNode.insertBefore(hm, s);
+// })()
 
 router.beforeEach((to, from, next) => {
   if(_hmt) {

@@ -12,9 +12,10 @@ const resolve = dir => {
 // 例如：https://www.foobar.com/my-app/
 // 需要将它改为'/my-app/'
 // iview-admin线上演示打包路径： https://file.iviewui.com/admin-dist/
+
 const BASE_URL = process.env.NODE_ENV === 'production'
     ? '/'
-    : '/'
+    : ''
 const env = process.env.NODE_ENV
 module.exports = {
     // Project deployment base
@@ -24,6 +25,7 @@ module.exports = {
     // sub-path here. For example, if your app is deployed at
     // https://www.foobar.com/my-app/
     // then change this to '/my-app/'
+    outputDir: '../../crmchat/public/admin',
     baseUrl: BASE_URL,
     // tweak internal webpack configuration.
     // see https://github.com/vuejs/vue-cli/blob/dev/docs/webpack.md
@@ -37,8 +39,22 @@ module.exports = {
     // 设为false打包时不生成.map文件
     productionSourceMap: false,
     // 这里写你调用接口的基础路径，来解决跨域，如果设置了代理，那你本地开发环境的axios的baseUrl要写为 '' ，即空字符串
-    // devServer: {
-    //   proxy: 'localhost:3000'
-    // }
-    publicPath: env === 'development' ? '/admin/' : '/admin/'
+    devServer: {
+        port: 11001,
+        proxy: {
+            '/ws': {
+                target: 'ws://localhost:20108',
+                changeOrigin: true,
+                ws: true,
+            },
+            '/api': {
+                target: 'http://localhost:20108',
+                changeOrigin: true,
+            }
+        },
+    },
+    publicPath: env === 'development' ? '/admin/' : '/admin/',
+    configureWebpack: {
+        devtool: 'source-map'
+    }
 }

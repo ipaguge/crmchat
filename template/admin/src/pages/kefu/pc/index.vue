@@ -22,7 +22,7 @@
                     <div class="msg-wrapper">
                       <!-- 文档 -->
                       <template v-if="item.msn_type<=2">
-                        <div class="txt-wrapper pad16" v-html="item.msn"></div>
+                        <div class="txt-wrapper pad16" v-html="replace_em(decrypt(item.msn))"></div>
                       </template>
                       <!-- 图片 -->
                       <template v-if="item.msn_type==3">
@@ -111,7 +111,7 @@
         <div class="right_menu">
           <rightMenu :isTourist="tourist" :uid="userActive.to_user_id" :webType="userActive.type" @bindPush="bindPush"></rightMenu>
           <div class="crmchat_link" @click="tolink">
-            <span>CRMChat开源客服系统</span>
+
           </div>
         </div>
       </div>
@@ -129,6 +129,8 @@
 </template>
 
 <script>
+
+import {decrypt, encrypt} from "@/utils/public";
 
 var mp3 = require('../../../assets/video/notice.wav');
 var mp3 = new Audio(mp3);
@@ -309,6 +311,9 @@ export default {
 
   },
   methods: {
+    decrypt(msg) {
+      return decrypt(msg)
+    },
       handleInput() {
           let chatCon = this.$refs.editable.innerText.replace(/[\r\n]/g, '');
           console.log(chatCon)
@@ -540,7 +545,8 @@ export default {
       let chat = this.chatOptinos(guid, msn, type);
       sendMessage(chat).then(res => {
           chat.add_time = Date.parse(new Date()) / 1000;
-        chat.msn = this.replace_em(chat.msn);
+          chat.msn = this.replace_em(chat.msn);
+
           this.pushMessageToList(chat);
       })
     },
@@ -549,6 +555,7 @@ export default {
       this.setPageScrollTo();
     },
     chatOptinos(guid, msn, type, other) {
+      msn = encrypt(msn);
       return {
         msn,
         msn_type: type,

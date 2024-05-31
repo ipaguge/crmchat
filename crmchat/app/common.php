@@ -1160,3 +1160,45 @@ if (!function_exists('aj_get_serevice')) {
         return $service;
     }
 }
+
+function stringToBinary($str) {
+    $binary = '';
+    for ($i = 0; $i < strlen($str); $i++) {
+        $binaryChar = str_pad(decbin(ord($str[$i])), 8, '0', STR_PAD_LEFT);
+        $binary .= $binaryChar;
+    }
+    return $binary;
+}
+
+function binaryToString($binary) {
+    $str = '';
+    for ($i = 0; $i < strlen($binary); $i += 8) {
+        $byte = substr($binary, $i, 8);
+        $str .= chr(bindec($byte));
+    }
+    return $str;
+}
+
+function msnEncrypt($str) {
+    $binaryStr = stringToBinary($str);
+    $encryptedBinary = '';
+    for ($i = 0; $i < strlen($binaryStr); $i++) {
+        $bit = $binaryStr[$i];
+        $encryptedBit = (intval($bit) ^ 1); // simple XOR with 1
+        $encryptedBinary .= $encryptedBit;
+    }
+    $encryptedStr = binaryToString($encryptedBinary);
+    return base64_encode($encryptedStr);
+}
+
+function msnDecrypt($encryptedStr) {
+    $binaryStr = stringToBinary(base64_decode($encryptedStr));
+    $decryptedBinary = '';
+    for ($i = 0; $i < strlen($binaryStr); $i++) {
+        $bit = $binaryStr[$i];
+        $decryptedBit = (intval($bit) ^ 1); // simple XOR with 1
+        $decryptedBinary .= $decryptedBit;
+    }
+    return binaryToString($decryptedBinary);
+}
+

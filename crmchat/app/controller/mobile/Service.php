@@ -80,6 +80,10 @@ class Service extends AuthController
             $kefuRand = 0;
             $kefuUd = 0;
         }
+
+        $toUserId = intval($toUserId);
+
+
         return app('json')->successful($this->services->getRecord($this->appId, $user, $idTo, $limit, $toUserId, (int)$cookieUid, (int)$kefuUd, (int)$kefuRand));
     }
 

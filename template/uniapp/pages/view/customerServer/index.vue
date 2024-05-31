@@ -176,6 +176,7 @@
 	import {
 		mapGetters
 	} from 'vuex';
+  import {encrypt} from "../../../../admin/src/utils/public";
 	const app = getApp();
 	export default {
 		components: {
@@ -515,6 +516,7 @@
 				});
 			},
 			chatOptinos(guid, msn, type, other) {
+        msn = encrypt(msn);
 				return {
 					msn,
 					msn_type: type,

@@ -2,55 +2,62 @@
   <div class="chatList">
     <div class="search_box">
       <Input prefix="ios-search" placeholder="搜索用户名称" @on-enter="bindSearch" @on-change="inputChange">
-      <Icon slot="prepend" type="ios-search" />
-      <Poptip v-model="visible" slot="append" placement="right-start" width="350" @on-popper-show="onPopperShow">
-          <Icon type="ios-funnel-outline" />
+        <Icon slot="prepend" type="ios-search"/>
+        <Poptip v-model="visible" slot="append" placement="right-start" width="350" @on-popper-show="onPopperShow">
+          <Icon type="ios-funnel-outline"/>
           <Tabs v-model="tabOn" slot="content">
-              <TabPane label="标签筛选" name="1">
-                  <div class="item-group">
-                      <div v-for="item in labelList" :key="item.id" class="item">
-                        <div class="item-title">{{ item.name }}</div>
-                        <div class="cell-group">
-                            <span v-for="cell in item.label" :key="cell.id" :class="{ on: cell.id == item.labelOn }" class="cell" @click="item.labelOn = (cell.id == item.labelOn ? -1 : cell.id)">{{ cell.label }}</span>
-                        </div>
-                    </div>
+            <TabPane label="标签筛选" name="1">
+              <div class="item-group">
+                <div v-for="item in labelList" :key="item.id" class="item">
+                  <div class="item-title">{{ item.name }}</div>
+                  <div class="cell-group">
+                    <span v-for="cell in item.label" :key="cell.id" :class="{ on: cell.id == item.labelOn }"
+                          class="cell" @click="item.labelOn = (cell.id == item.labelOn ? -1 : cell.id)">{{
+                        cell.label
+                      }}</span>
                   </div>
-                  <div class="button-group">
-                      <Button type="primary" ghost @click="visible = false">取消</Button>
-                      <Button type="primary" @click="onFilter">确定</Button>
+                </div>
+              </div>
+              <div class="button-group">
+                <Button type="primary" ghost @click="visible = false">取消</Button>
+                <Button type="primary" @click="onFilter">确定</Button>
+              </div>
+            </TabPane>
+            <TabPane label="分组筛选" name="2">
+              <div class="item-group">
+                <div class="item">
+                  <div class="cell-group">
+                    <span v-for="cell in userGroupList" :key="cell.id" :class="{ on: cell.groupOn }" class="cell"
+                          @click="cell.groupOn = !cell.groupOn">{{ cell.group_name }}</span>
                   </div>
-              </TabPane>
-              <TabPane label="分组筛选" name="2">
-                  <div class="item-group">
-                      <div class="item">
-                        <div class="cell-group">
-                            <span v-for="cell in userGroupList" :key="cell.id" :class="{ on: cell.groupOn }" class="cell" @click="cell.groupOn = !cell.groupOn">{{ cell.group_name }}</span>
-                        </div>
-                    </div>
-                  </div>
-                  <div class="button-group">
-                      <Button type="primary" ghost @click="visible = false">取消</Button>
-                      <Button type="primary" @click="onFilter">确定</Button>
-                  </div>
-              </TabPane>
+                </div>
+              </div>
+              <div class="button-group">
+                <Button type="primary" ghost @click="visible = false">取消</Button>
+                <Button type="primary" @click="onFilter">确定</Button>
+              </div>
+            </TabPane>
           </Tabs>
-      </Poptip>
+        </Poptip>
       </Input>
     </div>
     <div class="tab-head">
-      <div class="item" :class="{active:item.key == hdTabCur}" v-for="(item, index) in hdTab" :key="index" @click="changeTab(item)">{{item.title}}</div>
+      <div class="item" :class="{active:item.key == hdTabCur}" v-for="(item, index) in hdTab" :key="index"
+           @click="changeTab(item)">{{ item.title }}
+      </div>
     </div>
     <div class="scroll-box">
 
       <vue-scroll :ops="ops" @handle-scroll="handleScroll" v-if="userList.length>0">
-        <div class="chat-item" v-for="(item,index) in userList" :key="index" :class="{active:curId == item.id}" @click="selectUser(item,index)">
+        <div class="chat-item" v-for="(item,index) in userList" :key="index" :class="{active:curId == item.id}"
+             @click="selectUser(item,index)">
           <div class="avatar">
             <img v-lazy="item.avatar" alt="">
             <div class="status" :class="{off:item.online == 0}"></div>
           </div>
           <div class="user-info">
             <div class="hd">
-              <span class="name line1">{{item.nickname}}</span>
+              <span class="name line1">{{ item.nickname }}</span>
               <template v-if="item.type == 2">
                 <span class="label">小程序</span>
               </template>
@@ -65,14 +72,16 @@
               </template>
             </div>
             <div class="bd line1">
-              <template v-if="item.message_type <=2">{{item.message}}</template>
+              <template v-if="item.message_type <=2">
+                <span v-html="replace_em(decrypt(item.message))"></span>
+              </template>
               <template v-if="item.message_type ==3">[图片]</template>
               <template v-if="item.message_type ==5">[商品]</template>
               <template v-if="item.message_type ==6">[订单]</template>
             </div>
           </div>
           <div class="right-box">
-            <div class="time">{{item.update_time | toDay}}</div>
+            <div class="time">{{ item.update_time | toDay }}</div>
             <div class="num">
               <Badge :count="item.mssage_num">
                 <a href="#" class="demo-badge"></a>
@@ -88,24 +97,26 @@
 </template>
 
 <script>
-import { Socket } from '@/libs/socket';
+import {Socket} from '@/libs/socket';
 import dayjs from 'dayjs'
-import { record, userLabel, userGroupApi } from '@/api/kefu'
-import { HappyScroll } from 'vue-happy-scroll'
+import {record, userLabel, userGroupApi} from '@/api/kefu'
+import {HappyScroll} from 'vue-happy-scroll'
 import empty from "../../components/empty";
-import { forEach } from "../../../../libs/tools";
+import {forEach} from "../../../../libs/tools";
+import {decrypt} from "@/utils/public";
+
 export default {
   name: "chatList",
   props: {
     userOnline: {
       type: Object,
-      default: function() {
+      default: function () {
         return {}
       }
     },
     newRecored: {
       type: Object,
-      default: function() {
+      default: function () {
         return {}
       }
     },
@@ -113,7 +124,7 @@ export default {
       type: String,
       default: ''
     },
-    isShow:{
+    isShow: {
       type: Boolean,
       default: false
     }
@@ -125,11 +136,11 @@ export default {
   watch: {
     userOnline: {
       handler(nVal, oVal) {
-        if(nVal.hasOwnProperty('user_id')) {
+        if (nVal.hasOwnProperty('user_id')) {
           this.userList.forEach((el, index) => {
-            if(el.to_user_id == nVal.user_id) {
+            if (el.to_user_id == nVal.user_id) {
               el.online = nVal.online
-              if(nVal.online == 1) {
+              if (nVal.online == 1) {
                 this.$Notice.info({
                   title: '上线通知',
                   desc: `${el.nickname}上线`
@@ -144,7 +155,7 @@ export default {
     },
     searchData: {
       handler(nVal, oVal) {
-        if(nVal != oVal) {
+        if (nVal != oVal) {
           this.nickname = nVal
           this.page = 1
           this.isScroll = true
@@ -157,8 +168,8 @@ export default {
     },
     isShow: {
       handler(nVal, oVal) {
-        console.log('isShow',nVal)
-        if(nVal) {
+        console.log('isShow', nVal)
+        if (nVal) {
           this.wsStart()
         }
       },
@@ -216,16 +227,16 @@ export default {
         }
       },
       visible: false,
-    //   labelOn: -1,
-    //   groupOn: -1,
+      //   labelOn: -1,
+      //   groupOn: -1,
       labelList: [],
       userGroupList: [],
       tabOn: '1'
     }
   },
   filters: {
-    toDay: function(value) {
-      if(!value) return ''
+    toDay: function (value) {
+      if (!value) return ''
       return dayjs.unix(value).format('M月D日 HH:mm')
 
     }
@@ -233,62 +244,69 @@ export default {
   mounted() {
 
     this.bus.$on('change', data => {
-    //   this.nickname = data
-    for (const key in data) {
+      //   this.nickname = data
+      for (const key in data) {
         if (Object.hasOwnProperty.call(data, key)) {
-            this[key] = data[key];
+          this[key] = data[key];
         }
-    }
+      }
     })
     this.getList();
     // this.userLabel();
     // this.wsStart();
     userLabel().then(res => {
-        res.data.forEach(item => {
-            item.labelOn = -1;
-        });
-        this.labelList = res.data;
+      res.data.forEach(item => {
+        item.labelOn = -1;
+      });
+      this.labelList = res.data;
     });
     userGroupApi().then(res => {
-        res.data.forEach(item => {
-            item.groupOn = false;
-        });
-        this.userGroupList = res.data;
+      res.data.forEach(item => {
+        item.groupOn = false;
+      });
+      this.userGroupList = res.data;
     });
   },
   methods: {
-      onPopperShow() {
-          this.labelId = '';
-          this.groupId = '';
-      },
-      onFilter() {
-          if (this.tabOn == '1') {
-            this.labelList.forEach(item => {
-                if (item.labelOn != -1) {
-                    this.labelId += this.labelId ? `,${item.labelOn}` : item.labelOn;
-                }
-            });
-            // if (!this.labelId) {
-            //     return this.$Message.info('请选择标签筛选条件');
-            // }
-          } else {
-            this.userGroupList.forEach(item => {
-                if (item.groupOn) {
-                    this.groupId += this.groupId ? `,${item.id}` : item.id;
-                }
-            });
-            // if (!this.groupId) {
-            //   return this.$Message.info('请选择分组筛选条件');
-            // }
+    decrypt(msg) {
+      return decrypt(msg);
+    },
+    replace_em(str) {
+      str = str.replace(/\[em-([\s\S]*)\]/g, "<span class='em em-$1'/></span>");
+      return str;
+    },
+    onPopperShow() {
+      this.labelId = '';
+      this.groupId = '';
+    },
+    onFilter() {
+      if (this.tabOn == '1') {
+        this.labelList.forEach(item => {
+          if (item.labelOn != -1) {
+            this.labelId += this.labelId ? `,${item.labelOn}` : item.labelOn;
           }
-          this.nickname = '';
-          this.page = 1;
-          this.isScroll = true
-          this.userList = []
-          this.isSearch = true
-          this.getList();
-          this.visible = false;
-      },
+        });
+        // if (!this.labelId) {
+        //     return this.$Message.info('请选择标签筛选条件');
+        // }
+      } else {
+        this.userGroupList.forEach(item => {
+          if (item.groupOn) {
+            this.groupId += this.groupId ? `,${item.id}` : item.id;
+          }
+        });
+        // if (!this.groupId) {
+        //   return this.$Message.info('请选择分组筛选条件');
+        // }
+      }
+      this.nickname = '';
+      this.page = 1;
+      this.isScroll = true
+      this.userList = []
+      this.isSearch = true
+      this.getList();
+      this.visible = false;
+    },
     // 搜索
     bindSearch(e) {
       this.$emit('search', e.target.value);
@@ -296,28 +314,28 @@ export default {
     // inputChange
     inputChange(e) {
       console.log(e.target.value)
-      this.bus.$emit('change', { nickname: e.target.value })
+      this.bus.$emit('change', {nickname: e.target.value})
     },
-    deleteUserList(item){
+    deleteUserList(item) {
       this.userList.forEach((el, index, arr) => {
-        if(el.id == item.id){
-          this.userList.splice(index,1)
+        if (el.id == item.id) {
+          this.userList.splice(index, 1)
         }
       })
-      if(this.userList.length){
-        this.selectUser(this.userList[0],0)
+      if (this.userList.length) {
+        this.selectUser(this.userList[0], 0)
       }
     },
-    updateUserList(data,op){
+    updateUserList(data, op) {
       let ids = [];
-      this.userList.map(item=>{
+      this.userList.map(item => {
         ids.push(item.id)
         if (item.id === data.id) {
           item.message = data.message
           item._update_time = data._update_time
         }
       })
-      if(ids.indexOf(data.id) === -1 && op) {
+      if (ids.indexOf(data.id) === -1 && op) {
         this.userList.unshift(data);
       }
     },
@@ -328,11 +346,11 @@ export default {
         ws.$on('transfer', data => {
           let status = false
           that.userList.forEach((el, index, arr) => {
-            if(data.recored.id == el.id) {
+            if (data.recored.id == el.id) {
               status = true
               let oldVal = data.recored
               arr.splice(index, 1)
-              if(index == 0) {
+              if (index == 0) {
                 oldVal.index = index
                 this.$emit('setDataId', oldVal)
                 oldVal.mssage_num = 0
@@ -344,44 +362,48 @@ export default {
               });
             }
           })
-          if(!status) {
-            if(data.recored.is_tourist == this.hdTabCur) { this.userList.unshift(data.recored) }
+          if (!status) {
+            if (data.recored.is_tourist == this.hdTabCur) {
+              this.userList.unshift(data.recored)
+            }
           }
         })
         //已被转接走
-        ws.$on('rm_transfer',data=>{
+        ws.$on('rm_transfer', data => {
           let rmIndex = -1;
           that.userList.forEach((value, index) => {
-            if(value.id == data.recored.id){
+            if (value.id == data.recored.id) {
               rmIndex = index
             }
           })
-          if(rmIndex !== -1){
-            this.userList.splice(rmIndex,1)
-            if(this.userList.length){
+          if (rmIndex !== -1) {
+            this.userList.splice(rmIndex, 1)
+            if (this.userList.length) {
               this.$emit('setDataId', this.userList[0])
             }
           }
         })
         ws.$on('mssage_num', data => {
           // console.log('mssage_num',data)
-          if(data.recored.id) {
+          if (data.recored.id) {
             let status = false
             that.userList.forEach((el, index, arr) => {
-              if(data.recored.id == el.id) {
+              if (data.recored.id == el.id) {
                 status = true
                 let oldVal = data.recored
                 arr.splice(index, 1)
                 arr.unshift(oldVal)
               }
             })
-            if(!status) {
-              if(data.recored.is_tourist == this.hdTabCur) { this.userList.unshift(data.recored) }
+            if (!status) {
+              if (data.recored.is_tourist == this.hdTabCur) {
+                this.userList.unshift(data.recored)
+              }
             }
           }
 
 
-          if(data.recored.is_tourist != this.hdTabCur && data.recored.id) {
+          if (data.recored.is_tourist != this.hdTabCur && data.recored.id) {
             this.$Notice.info({
               title: this.hdTabCur ? '用户发来消息啦！' : '游客发来消息啦！'
             });
@@ -392,7 +414,7 @@ export default {
     },
     //切换
     changeTab(item) {
-      if(this.hdTabCur == item.key) return
+      if (this.hdTabCur == item.key) return
       this.hdTabCur = item.key
       this.isScroll = true
       this.page = 1
@@ -401,7 +423,7 @@ export default {
       this.getList()
     },
     getList() {
-      if(!this.isScroll) return
+      if (!this.isScroll) return
       record({
         nickname: this.nickname,
         labelId: this.labelId,
@@ -410,13 +432,13 @@ export default {
         limit: this.limit,
         is_tourist: this.hdTabCur === 1 ? '' : 0
       }).then(res => {
-        if(res.data.length > 0) {
+        if (res.data.length > 0) {
           res.data[0].mssage_num = 0
           this.isScroll = res.data.length >= this.limit
 
           this.userList = this.userList.concat(res.data)
 
-          if(this.page == 1 && res.data.length > 0 && !this.isSearch) {
+          if (this.page == 1 && res.data.length > 0 && !this.isSearch) {
             this.curId = res.data[0].id
             res.data[0].index = 0
             this.$emit('setDataId', res.data[0])
@@ -432,15 +454,15 @@ export default {
       this.getList()
     },
     // 选择用户
-    selectUser(item,index) {
-      if(this.curId == item.id) return
+    selectUser(item, index) {
+      if (this.curId == item.id) return
       item.mssage_num = 0
       this.curId = item.id
       item.index = index;
       this.$emit('setDataId', item)
     },
     handleScroll(vertical, horizontal, nativeEvent) {
-      if(vertical.process == 1) {
+      if (vertical.process == 1) {
         this.getList()
       }
     }
@@ -456,151 +478,164 @@ export default {
   height: 742px;
   border-right: 1px solid #ECECEC;
 
-  .tab-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 50px;
-    flex-shrink: 0;
-    padding: 0 52px;
-    font-size: 14px;
-    color: #000000;
+.tab-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 50px;
+  flex-shrink: 0;
+  padding: 0 52px;
+  font-size: 14px;
+  color: #000000;
 
-    .item {
-      position: relative;
-      cursor: pointer;
+.item {
+  position: relative;
+  cursor: pointer;
 
-      &:after {
-        display: none;
-        content: ' ';
-        position: absolute;
-        left: 50%;
-        bottom: -15px;
-        transform: translateX(-50%);
-        height: 2px;
-        width: 100%;
-        background: #1890FF;
-      }
+&
+:after {
+  display: none;
+  content: ' ';
+  position: absolute;
+  left: 50%;
+  bottom: -15px;
+  transform: translateX(-50%);
+  height: 2px;
+  width: 100%;
+  background: #1890FF;
+}
 
-      &.active {
-        color: #1890FF;
+&
+.active {
+  color: #1890FF;
 
-        &:after {
-          display: block;
-        }
-      }
-    }
-  }
+&
+:after {
+  display: block;
+}
 
-  .scroll-box {
-    flex: 1;
-    height: 500px;
-    overflow: hidden;
-  }
+}
+}
+}
 
-  .chat-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 10px;
-    height: 74px;
-    box-sizing: border-box;
-    border-left: 3px solid transparent;
-    cursor: pointer;
+.scroll-box {
+  flex: 1;
+  height: 500px;
+  overflow: hidden;
+}
 
-    &.active {
-      background: #EFF0F1;
-      border-left: 3px solid #1890FF;
-    }
+.chat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 10px;
+  height: 74px;
+  box-sizing: border-box;
+  border-left: 3px solid transparent;
+  cursor: pointer;
 
-    .avatar {
-      position: relative;
-      width: 40px;
-      height: 40px;
+&
+.active {
+  background: #EFF0F1;
+  border-left: 3px solid #1890FF;
+}
 
-      img {
-        display: block;
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-      }
+.avatar {
+  position: relative;
+  width: 40px;
+  height: 40px;
 
-      .status {
-        position: absolute;
-        right: 3px;
-        bottom: 0;
-        width: 8px;
-        height: 8px;
-        background: #48D452;
-        border: 1px solid #fff;
-        border-radius: 50%;
+img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
 
-        &.off {
-          background: #999999;
-        }
-      }
-    }
+.status {
+  position: absolute;
+  right: 3px;
+  bottom: 0;
+  width: 8px;
+  height: 8px;
+  background: #48D452;
+  border: 1px solid #fff;
+  border-radius: 50%;
 
-    .user-info {
-      width: 155px;
-      margin-left: 12px;
-      margin-top: 5px;
-      font-size: 16px;
+&
+.off {
+  background: #999999;
+}
 
-      .hd {
-        display: flex;
-        align-items: center;
-        color: rgba(0, 0, 0, 0.65);
+}
+}
 
-        .name {
-          max-width: 67%;
-        }
+.user-info {
+  width: 155px;
+  margin-left: 12px;
+  margin-top: 5px;
+  font-size: 16px;
 
-        .label {
-          margin-left: 5px;
-          color: #3875EA;
-          font-size: 12px;
-          background: #D8E5FF;
-          border-radius: 2px;
-          padding: 1px 5px;
+.hd {
+  display: flex;
+  align-items: center;
+  color: rgba(0, 0, 0, 0.65);
 
-          &.H5 {
-            background: #FAF1D0;
-            color: #DC9A04;
-          }
+.name {
+  max-width: 67%;
+}
 
-          &.wechat {
-            background: rgba(64, 194, 73, 0.16);
-            color: #40C249;
-          }
+.label {
+  margin-left: 5px;
+  color: #3875EA;
+  font-size: 12px;
+  background: #D8E5FF;
+  border-radius: 2px;
+  padding: 1px 5px;
 
-          &.pc {
-            background: rgba(100, 64, 194, 0.16);
-            color: #6440C2;
-          }
-        }
-      }
+&
+.H5 {
+  background: #FAF1D0;
+  color: #DC9A04;
+}
 
-      .bd {
-        margin-top: 3px;
-        font-size: 12px;
-        color: #8E959E;
-      }
-    }
+&
+.wechat {
+  background: rgba(64, 194, 73, 0.16);
+  color: #40C249;
+}
 
-    .right-box {
-      position: relative;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      color: #8E959E;
+&
+.pc {
+  background: rgba(100, 64, 194, 0.16);
+  color: #6440C2;
+}
 
-      .num {
-        margin-right: 12px;
-      }
-    }
-  }
+}
+}
+
+.bd {
+  margin-top: 3px;
+  font-size: 12px;
+  color: #8E959E;
+}
+
+}
+
+.right-box {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  color: #8E959E;
+
+.num {
+  margin-right: 12px;
+}
+
+}
+}
 }
 
 .chart-scroll {
@@ -612,99 +647,109 @@ export default {
 }
 
 .ivu-input-wrapper {
-    /deep/ .ivu-poptip-body {
-        padding: 0;
-    }
 
-    /deep/ .ivu-tabs-nav {
-        float: none;
-        display: inline-block;
+/deep/ .ivu-poptip-body {
+  padding: 0;
+}
 
-        .ivu-tabs-ink-bar {
-            background-color: #1890FF;
-        }
-    }
+/deep/ .ivu-tabs-nav {
+  float: none;
+  display: inline-block;
 
-    /deep/ .ivu-tabs-tab {
-        height: 50px;
-        padding: 0 16px;
-        line-height: 50px;
+.ivu-tabs-ink-bar {
+  background-color: #1890FF;
+}
 
-        &.ivu-tabs-tab-focused {
-            color: #1890FF;
-        }
-    }
+}
 
-    .ivu-tabs-tabpane {
-        display: flex;
-        flex-direction: column;
-        min-height: 300px;
-        padding: 14px;
+/deep/ .ivu-tabs-tab {
+  height: 50px;
+  padding: 0 16px;
+  line-height: 50px;
 
-        .item-group {
-            flex: 1;
-            min-height: 0;
-        }
+&
+.ivu-tabs-tab-focused {
+  color: #1890FF;
+}
 
-        .item {
-            ~ .item {
-                margin-top: 14px;
-            }
-        }
+}
 
-        .item-title {
-            font-size: 13px;
-            line-height: 18px;
-            text-align: left;
-            color: #333333;
-        }
+.ivu-tabs-tabpane {
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+  padding: 14px;
 
-        .cell-group {
-            margin: 12px -8px 0 0;
-            text-align: left;
-            white-space: normal;
-        }
+.item-group {
+  flex: 1;
+  min-height: 0;
+}
 
-        .cell {
-            display: inline-block;
-            height: 28px;
-            padding: 0 12px;
-            border-radius: 2px;
-            margin: 0 8px 8px 0;
-            background-color: #EEEEEE;
-            font-size: 13px;
-            line-height: 28px;
-            color: #333333;
-            cursor pointer;
+.item {
 
-            &.on {
-                background-color: #1890FF;
-                color: #FFFFFF;
-            }
-        }
+~ .item {
+  margin-top: 14px;
+}
 
-        .button-group {
-            text-align: right;
-        }
+}
 
-        .ivu-btn-primary {
-            width: 76px;
-            height: 28px;
-            padding: 0;
-            margin: 0;
-            background-color: #1890FF;
-            font-size: 13px;
-            line-height: 26px;
-            color: #FFFFFF;
+.item-title {
+  font-size: 13px;
+  line-height: 18px;
+  text-align: left;
+  color: #333333;
+}
 
-            &.ivu-btn-ghost {
-                margin-right: 10px;
-                border-color: #1890FF;
-                background-color: transparent;
-                color: #1890FF;
-            }
-        }
-    }
+.cell-group {
+  margin: 12px -8px 0 0;
+  text-align: left;
+  white-space: normal;
+}
+
+.cell {
+  display: inline-block;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 2px;
+  margin: 0 8px 8px 0;
+  background-color: #EEEEEE;
+  font-size: 13px;
+  line-height: 28px;
+  color: #333333;
+  cursor pointer;
+
+&
+.on {
+  background-color: #1890FF;
+  color: #FFFFFF;
+}
+
+}
+
+.button-group {
+  text-align: right;
+}
+
+.ivu-btn-primary {
+  width: 76px;
+  height: 28px;
+  padding: 0;
+  margin: 0;
+  background-color: #1890FF;
+  font-size: 13px;
+  line-height: 26px;
+  color: #FFFFFF;
+
+&
+.ivu-btn-ghost {
+  margin-right: 10px;
+  border-color: #1890FF;
+  background-color: transparent;
+  color: #1890FF;
+}
+
+}
+}
 }
 </style>
 

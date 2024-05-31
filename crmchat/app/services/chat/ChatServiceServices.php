@@ -228,12 +228,18 @@ class ChatServiceServices extends BaseServices
         if (!$toUserId) {
             //查找当前在线客服
             $serviceInfoList = $this->getServiceList(['appid' => $appId, 'status' => 1, 'online' => 1]);
-            if (!count($serviceInfoList)) {
-                throw new ValidateException('暂无客服人员在线，请稍后联系');
+            if ($serviceInfoList["count"] == 0) {
+//                $serviceInfoList = $this->getServiceList(['appid' => $appId, 'status' => 1]);
+//                if ($serviceInfoList["count"] == 0) {
+                    throw new ValidateException('暂无客服人员在线，请稍后联系1');
+//                }
             }
+
+
+
             $uids = array_column($serviceInfoList['list'], 'user_id');
             if (!$uids) {
-                throw new ValidateException('暂无客服人员在线，请稍后联系');
+                throw new ValidateException('暂无客服人员在线，请稍后联系2');
             }
             /** @var ChatServiceRecordServices $recordServices */
             $recordServices = app()->make(ChatServiceRecordServices::class);
@@ -248,7 +254,7 @@ class ChatServiceServices extends BaseServices
                 $toUserId = $uids[array_rand($uids)] ?? 0;
             }
             if (!$toUserId) {
-                throw new ValidateException('暂无客服人员在线，请稍后联系');
+                throw new ValidateException('暂无客服人员在线，请稍后联系3');
             }
         }
         //组合数据
@@ -271,6 +277,12 @@ class ChatServiceServices extends BaseServices
         $serviceLogList = $logServices->getServiceChatList(['appid' => $appId, 'to_user_id' => $userId], $limit, $idTo);
         $result['serviceList'] = array_reverse($logServices->tidyChat($serviceLogList));
         $result['welcome'] = $idTo ? false : $this->welcomeWordsV2($appId, $toUserId, $userId);
+
+//        foreach ($result['serviceList'] as &$item) {
+//            if ($item['msn_type'] == 1) {
+//                $item['msn'] = msnEncrypt($item['msn']);
+//            }
+//        }
         return $result;
     }
 

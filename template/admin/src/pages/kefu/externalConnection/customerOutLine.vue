@@ -1,33 +1,30 @@
 <template>
   <div class="customerOutLine_server" :class="{ 'max_style': !isMobile }">
     <div class="customerOutLine_server_header">
-      <span>商城客服已离线</span>
+      <span>無線上客服</span>
       <div class="pc_customerServer_container_header_handle" @click="closeIframe">
         <span class="iconfont">&#xe6c6;</span>
       </div>
     </div>
     <div class="customerOutLine_server_content">
       <div class="customerOutLine_server_content_message" v-html="feedback">
-        <div>您好，现在客服不在线，请留言。如果没有留下您的联系方式，客服将无法和您联系！</div>
+        <div>您好，現在客服不在線，請留言。如果沒有留下您的聯絡方式，客服將無法和您聯繫！</div>
         <div class="customerOutLine_server_content_message_phone">
           <div>
-            我们的工作时间：09:00～22:00
-          </div>
-          <div>
-            售前客服电话：400-8888-794
+            我們的工作時間：09:00～22:00
           </div>
         </div>
       </div>
 
       <div class="customerOutLine_server_content_form">
         <div>
-          <input v-model="feedData.rela_name" type="text" placeholder="请输入您的姓名">
+          <input v-model="feedData.rela_name" type="text" placeholder="請輸入您的姓名" :disabled="nickNamedisabled">
         </div>
+<!--        <div>-->
+<!--          <input v-model="feedData.phone" type="number" placeholder="请输入您的联系电话">-->
+<!--        </div>-->
         <div>
-          <input v-model="feedData.phone" type="number" placeholder="请输入您的联系电话">
-        </div>
-        <div>
-          <textarea v-model="feedData.content" name="" id="" cols="30" rows="10" placeholder="请填写留言内容"></textarea>
+          <textarea v-model="feedData.content" name="" id="" cols="30" rows="10" placeholder="請填寫留言內容"></textarea>
         </div>
       </div>
 
@@ -47,6 +44,7 @@ export default {
   data() {
     return {
       feedback: '', // 广告内容
+      nickNamedisabled: false,
       feedData: {
         rela_name: '',
         phone: '',
@@ -58,6 +56,11 @@ export default {
     ...mapState('media', ['isMobile']),
   },
   created() {
+    if (this.$route.query['nickName']){
+      this.nickNamedisabled = true
+      this.feedData.rela_name = "UID:"+this.$route.query['nickName'];
+    }
+
     this.selectFeedBack();
     parent.postMessage({ type: 'customerOutLine' }, "*"); // 通知客服已经离线
   },

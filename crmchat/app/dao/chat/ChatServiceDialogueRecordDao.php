@@ -105,7 +105,7 @@ class ChatServiceDialogueRecordDao extends BaseDao
         if (isset($where['to_user_id'])) {
             unset($where['to_user_id']);
         }
-        return $this->search($where)->when($upperId, function ($query) use ($upperId, $limit) {
+        $list =  $this->search($where)->when($upperId, function ($query) use ($upperId, $limit) {
             $query->where('id', '<', $upperId)->limit($limit)->order('id DESC');
         })->when(!$upperId, function ($query) use ($limit) {
             $query->limit($limit)->order('id DESC');
@@ -114,6 +114,15 @@ class ChatServiceDialogueRecordDao extends BaseDao
                 $query->where('user_id|to_user_id', $toUserId);
             });
         })->with($with)->select()->toArray();
+
+        foreach ($list as &$item) {
+            if ($item['msn_type'] == 1) {
+                $item['msn'] = msnEncrypt($item['msn']);
+            }
+        }
+
+
+        return $list;
     }
 
     /**
