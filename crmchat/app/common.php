@@ -1161,44 +1161,42 @@ if (!function_exists('aj_get_serevice')) {
     }
 }
 
-function stringToBinary($str) {
-    $binary = '';
-    for ($i = 0; $i < strlen($str); $i++) {
-        $binaryChar = str_pad(decbin(ord($str[$i])), 8, '0', STR_PAD_LEFT);
-        $binary .= $binaryChar;
+function toBinaryString($str) {
+    $binaryString = '';
+    $str = mb_convert_encoding($str, 'UTF-8');
+    $bytes = unpack('C*', $str);
+    foreach ($bytes as $byte) {
+        $binaryString .= str_pad(decbin($byte), 8, '0', STR_PAD_LEFT);
     }
-    return $binary;
+    return $binaryString;
 }
 
-function binaryToString($binary) {
-    $str = '';
-    for ($i = 0; $i < strlen($binary); $i += 8) {
-        $byte = substr($binary, $i, 8);
-        $str .= chr(bindec($byte));
+function fromBinaryString($binaryString) {
+    $bytes = [];
+    for ($i = 0; $i < strlen($binaryString); $i += 8) {
+        $bytes[] = bindec(substr($binaryString, $i, 8));
     }
-    return $str;
+    return pack('C*', ...$bytes);
 }
 
 function msnEncrypt($str) {
-    $binaryStr = stringToBinary($str);
-    $encryptedBinary = '';
-    for ($i = 0; $i < strlen($binaryStr); $i++) {
-        $bit = $binaryStr[$i];
-        $encryptedBit = (intval($bit) ^ 1); // simple XOR with 1
-        $encryptedBinary .= $encryptedBit;
+    $binaryString = toBinaryString($str);
+    $encryptedBinaryString = '';
+    for ($i = 0; $i < strlen($binaryString); $i++) {
+        $bit = $binaryString[$i];
+        $encryptedBinaryString .= ($bit === '0') ? '1' : '0'; // XOR with 1
     }
-    $encryptedStr = binaryToString($encryptedBinary);
-    return base64_encode($encryptedStr);
+    return base64_encode($encryptedBinaryString);
 }
 
 function msnDecrypt($encryptedStr) {
-    $binaryStr = stringToBinary(base64_decode($encryptedStr));
-    $decryptedBinary = '';
-    for ($i = 0; $i < strlen($binaryStr); $i++) {
-        $bit = $binaryStr[$i];
-        $decryptedBit = (intval($bit) ^ 1); // simple XOR with 1
-        $decryptedBinary .= $decryptedBit;
+    $binaryString = base64_decode($encryptedStr);
+    $decryptedBinaryString = '';
+    for ($i = 0; $i < strlen($binaryString); $i++) {
+        $bit = $binaryString[$i];
+        $decryptedBinaryString .= ($bit === '0') ? '1' : '0'; // XOR with 1
     }
-    return binaryToString($decryptedBinary);
+    return fromBinaryString($decryptedBinaryString);
 }
+
 

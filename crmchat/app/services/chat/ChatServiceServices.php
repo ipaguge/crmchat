@@ -320,8 +320,10 @@ class ChatServiceServices extends BaseServices
         if (!$msg) {
             return false;
         }
+
         $data['msn'] = '';
         $keyword = [];
+
         try {
             /** @var PullWord $words */
             $pullWord = $app->make(PullWord::class);
@@ -332,6 +334,7 @@ class ChatServiceServices extends BaseServices
             }
         } catch (\Throwable $e) {
         }
+
         array_push($keyword, $msg);
         if ($keyword) {
             /** @var ChatAutoReplyServices $authReplyService */
@@ -344,6 +347,7 @@ class ChatServiceServices extends BaseServices
         if (!$data['msn']) {
             return false;
         }
+
         /** @var ChatServiceDialogueRecordServices $logServices */
         $logServices = $app->make(ChatServiceDialogueRecordServices::class);
         $data = $logServices->setApp($app)->save($data);

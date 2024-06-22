@@ -219,6 +219,7 @@ class Service extends AuthController
             return $this->fail('不能和自己聊天');
         }
 
+
         $res = $services->sendMessage($data, $userId, $this->appId, 'kefu');
 
         $res['guid'] = $data['guid'];

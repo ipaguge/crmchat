@@ -300,7 +300,7 @@ function initCustomerServer(option) {
 
       // 跳转到离线留言界面
       if(e.data.type == 'customerOutLine') {
-        debugger
+
         this.outLine = true;
         this.setStyleOfCustomerServer(this.iframeLayout, {
           width: this.outLine ? '378px' : '730px',

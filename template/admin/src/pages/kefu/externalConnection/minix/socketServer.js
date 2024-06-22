@@ -267,7 +267,7 @@ export default {
         })
 
         ws.$on('kefu_logout',data=>{
-          debugger
+
           if(data.online == 0){
             this.$router.replace({
               name: 'customerOutLine',

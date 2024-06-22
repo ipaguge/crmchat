@@ -201,6 +201,8 @@ class KefuServices extends BaseServices
 
         $online = false;
         $newUserInfo = [];
+
+
         //查到送达人是否和当前用户聊天
         $fds = Manager::userFd($type, $toUserId);
         if ($fds) {
@@ -232,6 +234,7 @@ class KefuServices extends BaseServices
         } else {
             $saveData['other'] = '';
         }
+
 
         $logSaveData = $saveData;
         if ($logSaveData['msn']) {
@@ -305,6 +308,7 @@ class KefuServices extends BaseServices
             $autoReplyData = $services->autoReply(app(), $appId, $toUserId, $userId, $msn, $msnType, $other);
             if ($autoReplyData !== false) {
                 //发送给当前客服
+
                 if ($online && $toUserOnline) {
                     SwooleTaskService::kefu()->type('chat_auth')->to($toUserId)->data([$data, $autoReplyData])->push();
                 }
